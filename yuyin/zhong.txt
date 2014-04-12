@@ -1,0 +1,2 @@
+{"result":[]}
+{"result":[{"alternative":[{"transcript":"早上好","confidence":0.78884315},{"transcript":"早上好啊"},{"transcript":"早上好吗"},{"transcript":"早上好的"}],"final":true}],"result_index":0}
