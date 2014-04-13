@@ -50,30 +50,35 @@ m7219.init()
 # tao = [0x0,0x0,0x4,0x6,0x4,0x4,0x4,0x8,0x0,0x40,0x60,0x40,0x40,0x40,0x40,0x20,0x8,0x10,0x10,0x20,0x40,0x80,0x0,0x0,0x20,0x10,0x10,0x8,0xe,0x4,0x0,0x0]
 # tao2 = [0x1,0x1,0x2,0x4,0x9,0x10,0x6f,0x0,0x0,0x0,0x80,0x40,0x30,0x8e,0xe4,0x20,0x0,0x2,0x1,0x28,0x28,0x28,0x4f,0x0,0x40,0x80,0x0,0x88,0x96,0x12,0xf0,0x0]
 
+print('current have ' + str(m7219.NUM_MATRICES) + ' matrices.')
+
 def static_chinese_bytes(text_bytes):
     max_chinese = int(m7219.NUM_MATRICES / 4)
     available_matrices = max_chinese * 4
+    print('there are ' + str(available_matrices) + ' available.')
     for matrix in range(available_matrices):
         if matrix < available_matrices / 2:
-            num = max_chinese
+            num = 2
             row = 0
+            cur_char = int(matrix / 2)
         else:
             num = (max_chinese + 1) * 2
             row = 1
-        cur_char = int(matrix / num)
-        cur_char_byte = text_bytes[cur_char]
-        print('cur matrix: ' + str(matrix) + '; cur number: ' + str(num) + '; cur char: ' + str(cur_char))
-        j = (matrix - (cur_char + row) * 2) * 8
-        print('cur num: ' + str(j))
-        for i in range(8):
-            byte = cur_char_byte[j + i]
-            # print(byte)
-            # print type(byte)
-            # byte_hex = int(byte, 16)
-            # print byte_hex
-            # print type(byte_hex)
-            byte = int(byte, 16) - 0x00
-            m7219.send_matrix_reg_byte(matrix, i+1, byte)
+            cur_char = int((matrix - available_matrices / 2) / 2)
+        # cur_char = int((matrix - minus) / num)
+        if cur_char < len(text_bytes):
+            cur_char_byte = text_bytes[cur_char]
+            print('cur matrix: ' + str(matrix) + '; cur number: ' + str(num) + '; cur char: ' + str(cur_char))
+            # j = (matrix - (cur_char + row) * 2) * 8
+            if row == 0:
+                j = (matrix - cur_char * 2) * 8
+            else:
+                j = ((matrix - available_matrices / 2) - (cur_char - 1) * 2) * 8
+            print('cur num: ' + str(j))
+            for i in range(8):
+                byte = cur_char_byte[j + i]
+                byte = int(byte, 16) - 0x00
+                m7219.send_matrix_reg_byte(matrix, i+1, byte)
 
 if __name__ == "__main__":
     import sys
