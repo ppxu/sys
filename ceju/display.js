@@ -9,26 +9,39 @@ var newCodeArr = [];
 var st;
 var empty = ['0x0','0x0','0x0','0x0','0x0','0x0','0x0','0x0'];
 var exec = require('child_process').exec;
+var codeCache = {};
 
-function displayLED(text) {
+function displayLED(obj) {
+    var id = obj.id;
+    var text = obj.text;
     len = step = 0;
     originArr = finalArr = codeArr = newCodeArr = [];
     st && clearInterval(st);
-    query(text, function(data) {
-        exec("python led.py '" + data + "'");
-        originArr = data.slice(0,-1).split(';');
-        len = originArr.length;
-        originArr.forEach(function(zifu, idx) {
-            originArr[idx] = zifu.split(',');
-            codeArr[4*idx] = originArr[idx].slice(0,8);
-            codeArr[4*idx+1] = originArr[idx].slice(8,16);
-            codeArr[4*idx+2] = originArr[idx].slice(16,24);
-            codeArr[4*idx+3] = originArr[idx].slice(24,32);
+    if(codeCache[id]) {
+        var codeData = codeCache[id];
+        initArr(codeData);
+    } else {
+        query(text, function(data) {
+            initArr(data);
+            codeCache[id] = data;
         });
-        newCodeArr = codeArr;
-        finalArr = originArr;
-        st = setInterval(move,350);
+    }
+}
+
+function initArr(data) {
+    exec("python led.py '" + data + "'");
+    originArr = data.slice(0,-1).split(';');
+    len = originArr.length;
+    originArr.forEach(function(zifu, idx) {
+        originArr[idx] = zifu.split(',');
+        codeArr[4*idx] = originArr[idx].slice(0,8);
+        codeArr[4*idx+1] = originArr[idx].slice(8,16);
+        codeArr[4*idx+2] = originArr[idx].slice(16,24);
+        codeArr[4*idx+3] = originArr[idx].slice(24,32);
     });
+    newCodeArr = codeArr;
+    finalArr = originArr;
+    st = setInterval(move,350);
 }
 
 function display(arr) {
