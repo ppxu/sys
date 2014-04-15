@@ -22,7 +22,7 @@ function query(queryStr, callback) {
                 }
             }
         });
-        callback(output);
+        callback(output.slice(0,-1));
 
     });
 
