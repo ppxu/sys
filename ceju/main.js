@@ -4,7 +4,7 @@ var display = require('./display.js');
 
 var worker;
 var st;
-var str;
+var txtObj;
 
 var stage1 = [{
     id: '1-1',
@@ -114,6 +114,7 @@ function getDistance() {
             st = setInterval(getDistance, 10000);
         } else {
             var result = stdout;
+            txtObj = {};
             if (!result || result.indexOf(':') === -1) {
                 console.log('unknown error, restart program...');
                 worker.kill();

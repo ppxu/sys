@@ -44,7 +44,7 @@ var codeCache = {
 };
 var numCode = [
     ['0000', '1111', '1001', '1001', '1001', '1001', '1001', '1111'],
-    ['0000', '0001', '0001', '0001', '0001', '0001', '0001', '0001'],
+    ['0000', '1000', '1000', '1000', '1000', '1000', '1000', '1000'],
     ['0000', '1111', '0001', '0001', '1111', '1000', '1000', '1111'],
     ['0000', '1111', '0001', '0001', '1111', '0001', '0001', '1111'],
     ['0000', '1001', '1001', '1001', '1111', '0001', '0001', '0001'],
@@ -55,7 +55,7 @@ var numCode = [
     ['0000', '1111', '1001', '1001', '1111', '0001', '0001', '1111'],
 ];
 var dot = ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0100'];
-var pre = '0x0,0x67,0x52,0x52,0x52,0x67,0x0,0x0,0x0,0x30,0x40,0x32,0x8,0x32,0x0,0x0,';
+var pre = '0x0,0xe7,0x92,0x92,0x92,0xe7,0x0,0x0,0x0,0x38,0x40,0x32,0x8,0x72,0x0,0x0,';
 
 function displayLED(obj) {
     var id = obj.id;
@@ -64,14 +64,14 @@ function displayLED(obj) {
     len = step = 0;
     originArr = finalArr = codeArr = newCodeArr = [];
     st && clearInterval(st);
+    var distanceData = createNum(distance);
+    console.log(distanceData);
     if(codeCache[id]) {
         var codeData = codeCache[id];
-        var distanceData = createNum(distance);
-        initArr(distanceData +';'+ codeData);
+        initArr(distanceData + ';' + codeData);
     } else {
         query(text, function(data) {
-            var distanceData = createNum(distance);
-            initArr(distanceData +';'+ data);
+            initArr(distanceData + ';' + data);
             codeCache[id] = data;
         });
     }
