@@ -125,22 +125,27 @@ function getDistance() {
                 if (data < 5) {
                     txtObj = getRandText(stage1);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+                    txtObj.distance = data;
                     display(txtObj);
                 } else if (data < 10) {
                     txtObj = getRandText(stage2);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+                    txtObj.distance = data;
                     display(txtObj);
                 } else if (data < 50) {
                     txtObj = getRandText(stage3);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+                    txtObj.distance = data;
                     display(txtObj);
                 } else if (data < 100) {
                     txtObj = getRandText(stage4);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+                    txtObj.distance = data;
                     display(txtObj);
                 } else {
                     txtObj = getRandText(stage5);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+                    txtObj.distance = 99.9;
                     display(txtObj);
                 }
             }
