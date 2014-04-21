@@ -56,6 +56,7 @@ var numCode = [
 ];
 var dot = ['0000', '0000', '0000', '0000', '0000', '0000', '0000', '0100'];
 var pre = '0x0,0xe7,0x92,0x92,0x92,0xe7,0x0,0x0,0x0,0x38,0x40,0x32,0x8,0x72,0x0,0x0,';
+var distanceData = '';
 
 function displayLED(obj) {
     var id = obj.id;
@@ -63,15 +64,16 @@ function displayLED(obj) {
     var distance = obj.distance;
     len = step = 0;
     originArr = finalArr = codeArr = newCodeArr = [];
+    distanceData = '';
     st && clearInterval(st);
-    var distanceData = createNum(distance);
+    distanceData = createNum(distance);
     console.log(distanceData);
     if(codeCache[id]) {
         var codeData = codeCache[id];
-        initArr(distanceData + ';' + codeData);
+        initArr(codeData);
     } else {
         query(text, function(data) {
-            initArr(distanceData + ';' + data);
+            initArr(data);
             codeCache[id] = data;
         });
     }
@@ -97,7 +99,7 @@ function createNum(num) {
 }
 
 function initArr(data) {
-    exec("python led.py '" + data + "'");
+    exec("python led.py '" + distanceData + ';' + data + "'");
     originArr = data.split(';');
     len = originArr.length;
     originArr.forEach(function(zifu, idx) {
@@ -117,7 +119,7 @@ function display(arr) {
     arr.forEach(function(arr1,i){
         str += arr1.join(',')+';';
     });
-    exec("python led.py '" + str + "'");
+    exec("python led.py '" + distanceData + ';' + str + "'");
 }
 
 function move() {

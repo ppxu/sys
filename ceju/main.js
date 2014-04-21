@@ -111,7 +111,7 @@ function getDistance() {
             console.log('error found, restart program...');
             worker.kill();
             st && clearInterval(st);
-            st = setInterval(getDistance, 10000);
+            st = setInterval(getDistance, 12000);
         } else {
             var result = stdout;
             txtObj = {};
@@ -119,7 +119,7 @@ function getDistance() {
                 console.log('unknown error, restart program...');
                 worker.kill();
                 st && clearInterval(st);
-                st = setInterval(getDistance, 10000);
+                st = setInterval(getDistance, 12000);
             } else {
                 var distance = result.split(':')[1];
                 var data = parseFloat(distance, 10).toFixed(1);
@@ -160,5 +160,5 @@ function getRandText(arr) {
     return arr[ran];
 }
 
-st = setInterval(getDistance, 10000);
+st = setInterval(getDistance, 12000);
 // getDistance();
