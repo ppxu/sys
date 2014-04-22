@@ -1,0 +1,23 @@
+{
+  "name": "sys-pi",
+  "version": "0.0.1",
+  "description": "sys-pi",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.alibaba-inc.com:ziying.wzc/sys-pi.git"
+  },
+  "keywords": [
+    "raspberrypi",
+    "distance",
+    "display"
+  ],
+  "author": "ziying, zihan",
+  "license": "ISC",
+  "dependencies": {
+    "request": "~2.34.0"
+  }
+}

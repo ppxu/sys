@@ -55,7 +55,7 @@ print('current have ' + str(m7219.NUM_MATRICES) + ' matrices.')
 def static_chinese_bytes(text_bytes):
     max_chinese = int(m7219.NUM_MATRICES / 4)
     available_matrices = max_chinese * 4
-    print('there are ' + str(available_matrices) + ' available.')
+    # print('there are ' + str(available_matrices) + ' available.')
     for matrix in range(available_matrices):
         if matrix < available_matrices / 2:
             num = 2
@@ -65,38 +65,53 @@ def static_chinese_bytes(text_bytes):
             num = (max_chinese + 1) * 2
             row = 1
             cur_char = int((matrix - available_matrices / 2) / 2)
-        # cur_char = int((matrix - minus) / num)
         if cur_char < len(text_bytes):
             cur_char_byte = text_bytes[cur_char]
-            print('cur matrix: ' + str(matrix) + '; cur number: ' + str(num) + '; cur char: ' + str(cur_char))
-            # j = (matrix - (cur_char + row) * 2) * 8
+            # print('cur matrix: ' + str(matrix) + '; cur number: ' + str(num) + '; cur char: ' + str(cur_char))
             if row == 0:
                 j = (matrix - cur_char * 2) * 8
             else:
                 j = ((matrix - available_matrices / 2) - (cur_char - 1) * 2) * 8
-            print('cur num: ' + str(j))
+            # print('cur num: ' + str(j))
             for i in range(8):
                 byte = cur_char_byte[j + i]
                 byte = int(byte, 16) - 0x00
                 m7219.send_matrix_reg_byte(matrix, i+1, byte)
 
+def display_text_bytes_str(text_byte_str):
+    text_bytes_arr = []
+    texts = text_byte_str.split(';')
+    for txt in texts:
+        if len(txt):
+            txt_byes = txt.split(',')
+            if len(txt_byes) == 32:
+                txt_byes_arr = []
+                for b in txt_byes:
+                    txt_byes_arr.append(hex(int(b, 16)))
+                text_bytes_arr.append(txt_byes_arr)
+    # print(text_bytes_arr)
+    static_chinese_bytes(text_bytes_arr)
+
+def scroll_message(message_arr, delay=2):
+    delay = float(delay)
+    for message in message_arr:
+        static_chinese_bytes(message)
+        time.sleep(delay)
+
 if __name__ == "__main__":
     import sys
 
-    try:
-        text_bytes_arr = []
-        text_bytes_str = sys.argv[1]
-        texts = text_bytes_str.split(';')
-        for txt in texts:
-            if len(txt):
-                txt_byes = txt.split(',')
-                if len(txt_byes) == 32:
-                    txt_byes_arr = []
-                    for b in txt_byes:
-                        txt_byes_arr.append(hex(int(b, 16)))
-                    text_bytes_arr.append(txt_byes_arr)
-        print(text_bytes_arr)
-        static_chinese_bytes(text_bytes_arr)
-    except IndexError:
-        # If no arguments given, show help text
-        print "led.py please specify a text bytes string"
+    text_bytes_str = sys.argv[1]
+    if len(sys.argv) > 2:
+        interval = float(sys.argv[2])
+    else:
+        interval = 0.2
+
+    print('interval: ', interval)
+
+    texts_streams = text_bytes_str.split('|')
+    stream_length = len(texts_streams)
+    for text_stream in texts_streams:
+        if text_stream and len(text_stream) > 5:
+            display_text_bytes_str(text_stream)
+            time.sleep(interval)
