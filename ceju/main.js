@@ -111,7 +111,7 @@ function getDistance() {
             console.log('error found, restart program...');
             worker.kill();
             st && clearInterval(st);
-            st = setInterval(getDistance, 6000);
+            st = setInterval(getDistance, 1000);
         } else {
             var result = stdout;
             txtObj = {};
@@ -119,11 +119,11 @@ function getDistance() {
                 console.log('unknown error, restart program...');
                 worker.kill();
                 st && clearInterval(st);
-                st = setInterval(getDistance, 6000);
+                st = setInterval(getDistance, 1000);
             } else {
                 var distance = result.split(':')[1];
                 var data = parseFloat(distance, 10).toFixed(1);
-                if (data < 5) {
+                /*if (data < 5) {
                     txtObj = getRandText(stage1);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
                     txtObj.distance = data;
@@ -148,20 +148,22 @@ function getDistance() {
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
                     txtObj.distance = 99.9;
                     display(txtObj);
-                }
+                }*/
+                console.log('当前距离: ' + data + 'cm');
+                display(data, getDistance);
             }
         }
     });
     worker.on('error', function() {
         worker.kill();
         st && clearInterval(st);
-        st = setInterval(getDistance, 6000);
+        st = setInterval(getDistance, 1000);
     });
 
     worker.on('exit', function() {
         worker.kill();
         st && clearInterval(st);
-        st = setInterval(getDistance, 6000);
+        st = setInterval(getDistance, 1000);
     });
 }
 
@@ -171,5 +173,5 @@ function getRandText(arr) {
     return arr[ran];
 }
 
-st = setInterval(getDistance, 6000);
-// getDistance();
+// st = setInterval(getDistance, 1000);
+getDistance();
