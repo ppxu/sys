@@ -1,13 +1,16 @@
 var exec = require('child_process').exec;
 
 var display = require('./display.js').displayDistance;
+
+//show loading
 var loading = require('./display.js').displayLoading;
+loading();
 
 var worker;
 var st;
 var txtObj;
 
-var stage1 = [{
+/*var stage1 = [{
     id: '1-1',
     text: '哎哟，我的小菊花！'
 }, {
@@ -104,26 +107,22 @@ var stage5 = [{
 }, {
     id: '5-5',
     text: '大龄剩女，追尾必嫁～'
-}];
+}];*/
 
 function getDistance() {
     worker = exec('sudo python distance.py', function(err, stdout, stderr) {
         if (err) {
             console.log('error found, restart program...');
-            worker.kill();
-            st && clearInterval(st);
-            st = setInterval(getDistance, 1000);
+            errHandle();
         } else {
             var result = stdout;
             txtObj = {};
             if (!result || result.indexOf(':') === -1) {
                 console.log('unknown error, restart program...');
-                worker.kill();
-                st && clearInterval(st);
-                st = setInterval(getDistance, 1000);
+                errHandle();
             } else {
                 var distance = result.split(':')[1];
-                var data = parseFloat(distance, 10).toFixed(1);
+                var data = parseFloat(distance).toFixed(1);
                 /*if (data < 5) {
                     txtObj = getRandText(stage1);
                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
@@ -150,22 +149,27 @@ function getDistance() {
                     txtObj.distance = 99.9;
                     display(txtObj);
                 }*/
+                (data < 0.1) && (data = 0.1);
+                (data > 99.9) && (data = 99.9);
                 console.log('当前距离: ' + data + 'cm');
                 display(data, getDistance);
             }
         }
     });
     worker.on('error', function() {
-        worker.kill();
-        st && clearInterval(st);
-        st = setInterval(getDistance, 1000);
+        errHandle();
     });
 
     worker.on('exit', function() {
-        worker.kill();
-        st && clearInterval(st);
-        st = setInterval(getDistance, 1000);
+        errHandle();
     });
+}
+
+function errHandle() {
+    worker.kill();
+    setTimeout(function() {
+        getDistance();
+    }, 1000);
 }
 
 function getRandText(arr) {
@@ -175,8 +179,8 @@ function getRandText(arr) {
 }
 
 // st = setInterval(getDistance, 1000);
-loading();
 
-setTimeout(function(){
+//wait loading end
+setTimeout(function() {
     getDistance();
 }, 4000);
