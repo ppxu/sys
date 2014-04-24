@@ -1,6 +1,7 @@
 var exec = require('child_process').exec;
 
-var display = require('./display.js');
+var display = require('./display.js').displayDistance;
+var loading = require('./display.js').displayLoading;
 
 var worker;
 var st;
@@ -174,4 +175,8 @@ function getRandText(arr) {
 }
 
 // st = setInterval(getDistance, 1000);
-getDistance();
+loading();
+
+setTimeout(function(){
+    getDistance();
+}, 4000);
