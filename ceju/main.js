@@ -165,14 +165,14 @@ function getDistance() {
             }
         }
     });
-    // worker.on('error', function() {
-    //     console.log('worker error');
-    //     worker.kill();
+    worker.on('error', function() {
+        console.log('worker error');
+        worker.kill();
     //     // st && clearInterval(st);
     //     // st = setInterval(getDistance, 1000);
     //     // errHandle();
-    //     getDistance();
-    // });
+        getDistance();
+    });
 
     // worker.on('exit', function() {
     //     console.log('worker exit');
