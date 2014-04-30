@@ -1,8 +1,26 @@
+#!/usr/bin/python
+
 __author__ = 'daxingplay'
 
 import time
+import RPi.GPIO as GPIO
 from bottle import route, run, request
 from max7219 import MAX7219array as m7219
+
+## setup ultrasonic measurement
+
+# Use BCM GPIO references
+# instead of physical pin numbers
+GPIO.setmode(GPIO.BCM)
+
+# Define GPIO to use on Pi
+GPIO_TRIGGER = 25
+GPIO_ECHO = 4
+
+GPIO.setup(GPIO_TRIGGER, GPIO.OUT)  # Trigger
+GPIO.setup(GPIO_ECHO, GPIO.IN)      # Echo
+
+## setup max7219 led matrices
 
 m7219.init()
 print('current have ' + str(m7219.NUM_MATRICES) + ' matrices.')
@@ -32,6 +50,38 @@ def static_chinese_bytes(text_bytes):
                 byte = cur_char_byte[j + i]
                 byte = int(byte, 16) - 0x00
                 m7219.send_matrix_reg_byte(matrix, i+1, byte)
+
+## routes
+
+@route('/distance')
+def distance():
+    # Set trigger to False (Low)
+    GPIO.output(GPIO_TRIGGER, False)
+
+    # Allow module to settle
+    time.sleep(0.1)
+    # Send 10us pulse to trigger
+    GPIO.output(GPIO_TRIGGER, True)
+    time.sleep(0.00001)
+    GPIO.output(GPIO_TRIGGER, False)
+    start = time.time()
+    while GPIO.input(GPIO_ECHO) == 0:
+        start = time.time()
+
+    while GPIO.input(GPIO_ECHO) == 1:
+        stop = time.time()
+
+    # Calculate pulse length
+    elapsed = stop-start
+
+    # Distance pulse travelled in that time is time
+    # multiplied by the speed of sound (cm/s)
+    distance = elapsed * 34000
+
+    # That was the distance there and back so halve the value
+    distance = distance / 2
+
+    return "%.1f" % distance
 
 @route('/display', method="POST")
 def display():

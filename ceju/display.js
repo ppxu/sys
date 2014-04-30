@@ -164,9 +164,11 @@ function postData(data, callback) {
         method: 'POST',
         form: {
             'text': data
-        }
+        },
+        timeout: 2000
     }, function(err, res, body) {
         if (err) {
+            console.log('display error.');
             exec("python led.py '" + data + "'", function(e, stdout, stderr) {
                 callback && callback();
             });
