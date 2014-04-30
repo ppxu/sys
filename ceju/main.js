@@ -1,4 +1,5 @@
 var exec = require('child_process').exec;
+var request = require('request');
 
 var display = require('./display.js').displayDistance;
 
@@ -109,80 +110,80 @@ var stage5 = [{
     text: '大龄剩女，追尾必嫁～'
 }];*/
 
-function getDistance() {
-    worker = exec('sudo python distance.py', function(err, stdout, stderr) {
-        console.log('get distance');
-        if (err) {
-            console.log('error found, restart program...');
-            worker.kill();
-            // st && clearInterval(st);
-            // st = setInterval(getDistance, 1000);
-            // errHandle();
-            getDistance();
-        } else {
-            var result = stdout;
-            txtObj = {};
-            if (!result || result.indexOf(':') === -1) {
-                console.log('unknown error, restart program...');
-                worker.kill();
-                // st && clearInterval(st);
-                // st = setInterval(getDistance, 1000);
-                // errHandle();
-                getDistance();
-            } else {
-                var distance = result.split(':')[1];
-                var data = parseFloat(distance).toFixed(1);
-                /*if (data < 5) {
-                    txtObj = getRandText(stage1);
-                    console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
-                    txtObj.distance = data;
-                    display(txtObj);
-                } else if (data < 10) {
-                    txtObj = getRandText(stage2);
-                    console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
-                    txtObj.distance = data;
-                    display(txtObj);
-                } else if (data < 50) {
-                    txtObj = getRandText(stage3);
-                    console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
-                    txtObj.distance = data;
-                    display(txtObj);
-                } else if (data < 100) {
-                    txtObj = getRandText(stage4);
-                    console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
-                    txtObj.distance = data;
-                    display(txtObj);
-                } else {
-                    txtObj = getRandText(stage5);
-                    console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
-                    txtObj.distance = 99.9;
-                    display(txtObj);
-                }*/
-                (data < 0.1) && (data = 0.1);
-                (data > 99.9) && (data = 99.9);
-                console.log('当前距离: ' + data + 'cm');
-                display(data, getDistance);
-            }
-        }
-    });
-    worker.on('error', function() {
-        console.log('worker error');
-        worker.kill();
-    //     // st && clearInterval(st);
-    //     // st = setInterval(getDistance, 1000);
-    //     // errHandle();
-        getDistance();
-    });
+// function getDistance() {
+//     worker = exec('sudo python distance.py', function(err, stdout, stderr) {
+//         console.log('get distance');
+//         if (err) {
+//             console.log('error found, restart program...');
+//             worker.kill();
+//             // st && clearInterval(st);
+//             // st = setInterval(getDistance, 1000);
+//             // errHandle();
+//             getDistance();
+//         } else {
+//             var result = stdout;
+//             txtObj = {};
+//             if (!result || result.indexOf(':') === -1) {
+//                 console.log('unknown error, restart program...');
+//                 worker.kill();
+//                 // st && clearInterval(st);
+//                 // st = setInterval(getDistance, 1000);
+//                 // errHandle();
+//                 getDistance();
+//             } else {
+//                 var distance = result.split(':')[1];
+//                 var data = parseFloat(distance).toFixed(1);
+//                 if (data < 5) {
+//                     txtObj = getRandText(stage1);
+//                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+//                     txtObj.distance = data;
+//                     display(txtObj);
+//                 } else if (data < 10) {
+//                     txtObj = getRandText(stage2);
+//                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+//                     txtObj.distance = data;
+//                     display(txtObj);
+//                 } else if (data < 50) {
+//                     txtObj = getRandText(stage3);
+//                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+//                     txtObj.distance = data;
+//                     display(txtObj);
+//                 } else if (data < 100) {
+//                     txtObj = getRandText(stage4);
+//                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+//                     txtObj.distance = data;
+//                     display(txtObj);
+//                 } else {
+//                     txtObj = getRandText(stage5);
+//                     console.log('当前距离: ' + data + 'cm, ' + txtObj.text);
+//                     txtObj.distance = 99.9;
+//                     display(txtObj);
+//                 }
+//                 (data < 0.1) && (data = 0.1);
+//                 (data > 99.9) && (data = 99.9);
+//                 console.log('当前距离: ' + data + 'cm');
+//                 display(data, getDistance);
+//             }
+//         }
+//     });
+//     worker.on('error', function() {
+//         console.log('worker error');
+//         worker.kill();
+//     //     // st && clearInterval(st);
+//     //     // st = setInterval(getDistance, 1000);
+//     //     // errHandle();
+//         getDistance();
+//     });
 
-    // worker.on('exit', function() {
-    //     console.log('worker exit');
-    //     worker.kill();
-    //     // st && clearInterval(st);
-    //     // st = setInterval(getDistance, 1000);
-    //     // errHandle();
-    //     getDistance();
-    // });
-}
+//     // worker.on('exit', function() {
+//     //     console.log('worker exit');
+//     //     worker.kill();
+//     //     // st && clearInterval(st);
+//     //     // st = setInterval(getDistance, 1000);
+//     //     // errHandle();
+//     //     getDistance();
+//     // });
+// }
 
 // function errHandle() {
 //     worker.kill();
@@ -191,11 +192,38 @@ function getDistance() {
 //     }, 1000);
 // }
 
-function getRandText(arr) {
-    var length = arr.length;
-    var ran = Math.floor(Math.random() * length);
-    return arr[ran];
+function getDistance() {
+    getData(function(data) {
+        data = parseFloat(data).toFixed(1);
+        (data < 0.1) && (data = 0.1);
+        (data > 99.9) && (data = 99.9);
+        console.log('当前距离: ' + data + 'cm');
+        display(data, getDistance);
+    });
 }
+
+function getData(callback) {
+    request({
+        uri: 'http://localhost:8338/distance',
+        method: 'GET',
+        timeout: 2000
+    }, function(err, res, body) {
+        if (err) {
+            console.log('distance error.');
+            // exec("sudo python distance.py '" + data + "'", function(e, stdout, stderr) {
+            //     callback && callback(stdout);
+            // });
+        } else {
+            callback && callback(body);
+        }
+    });
+}
+
+// function getRandText(arr) {
+//     var length = arr.length;
+//     var ran = Math.floor(Math.random() * length);
+//     return arr[ran];
+// }
 
 // st = setInterval(getDistance, 1000);
 // loading();
