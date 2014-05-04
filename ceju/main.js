@@ -213,6 +213,7 @@ function getData(callback) {
             // exec("sudo python distance.py '" + data + "'", function(e, stdout, stderr) {
             //     callback && callback(stdout);
             // });
+            getDistance();
         } else {
             callback && callback(body);
         }
