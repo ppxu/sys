@@ -16,7 +16,7 @@ function getDistance() {
     getData(function(data) {
         data = parseFloat(data).toFixed(1);
 
-        if(isNaN(data)) {
+        if (isNaN(data)) {
             console.log('data invalid, retry...');
             clean();
             return;
