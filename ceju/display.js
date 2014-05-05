@@ -1,5 +1,5 @@
-var query = require('./query.js');
-var exec = require('child_process').exec;
+// var query = require('./query.js');
+// var exec = require('child_process').exec;
 var request = require('request');
 var len = 0;
 var step = 0;
@@ -80,43 +80,43 @@ function newDisplayLED(distance, callback) {
 
     distanceCode = createNum(distance);
 
-    if (distance < 10) {
+    if (distance < 5) {
         postData(distanceCode + ';' + face[0], callback);
-    } else if (distance < 20) {
+    } else if (distance < 10) {
         postData(distanceCode + ';' + face[1], callback);
-    } else if (distance < 40) {
+    } else if (distance < 20) {
         postData(distanceCode + ';' + face[2], callback);
-    } else if (distance < 60) {
+    } else if (distance < 40) {
         postData(distanceCode + ';' + face[3], callback);
-    } else if (distance < 80) {
+    } else if (distance < 60) {
         postData(distanceCode + ';' + face[4], callback);
-    } else if (distance < 100) {
+    } else if (distance < 80) {
         postData(distanceCode + ';' + face[5], callback);
     } else {
         postData(distanceCode + ';' + face[6], callback);
     }
 }
 
-function displayLED(obj) {
-    var id = obj.id;
-    var text = obj.text;
-    var distance = obj.distance;
-    len = step = 0;
-    originArr = finalArr = codeArr = newCodeArr = [];
-    distanceCode = finalCode = '';
-    sti && clearInterval(sti);
+// function displayLED(obj) {
+//     var id = obj.id;
+//     var text = obj.text;
+//     var distance = obj.distance;
+//     len = step = 0;
+//     originArr = finalArr = codeArr = newCodeArr = [];
+//     distanceCode = finalCode = '';
+//     sti && clearInterval(sti);
 
-    distanceCode = createNum(distance);
-    if (codeCache[id]) {
-        var codeData = codeCache[id];
-        initArr(codeData);
-    } else {
-        query(text, function(data) {
-            initArr(data);
-            codeCache[id] = data;
-        });
-    }
-}
+//     distanceCode = createNum(distance);
+//     if (codeCache[id]) {
+//         var codeData = codeCache[id];
+//         initArr(codeData);
+//     } else {
+//         query(text, function(data) {
+//             initArr(data);
+//             codeCache[id] = data;
+//         });
+//     }
+// }
 
 function createNum(num) {
     var num1 = parseInt(num / 10, 10);
@@ -168,6 +168,7 @@ function initArr(data) {
 }
 
 function postData(data, callback) {
+    console.log('begin display code...');
     request({
         uri: 'http://localhost:8338/display',
         method: 'POST',
@@ -177,11 +178,13 @@ function postData(data, callback) {
         timeout: 2000
     }, function(err, res, body) {
         if (err) {
-            console.log('display error.');
-            exec("python led.py '" + data + "'", function(e, stdout, stderr) {
-                callback && callback();
-            });
+            console.log('display error...');
+            // exec("python led.py '" + data + "'", function(e, stdout, stderr) {
+            //     callback && callback();
+            // });
+            callback && callback();
         } else {
+            console.log('display success...');
             callback && callback();
         }
     });

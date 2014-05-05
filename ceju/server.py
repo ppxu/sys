@@ -3,9 +3,21 @@
 __author__ = 'daxingplay'
 
 import time
+import atexit
+import signal
+import sys
 import RPi.GPIO as GPIO
 from bottle import route, run, request
 from max7219 import MAX7219array as m7219
+
+## common functions
+
+
+def cleanup():
+    GPIO.cleanup()
+    print "clean up GPIO settings."
+    sys.exit(0)
+
 
 ## setup ultrasonic measurement
 
@@ -108,4 +120,18 @@ def display():
         # print('sleep for ' + str(delay) + ' seconds.')
         time.sleep(delay)
 
-run(host='localhost', port=8338)
+
+@route('./clean')
+def clean():
+    GPIO.cleanup()
+
+try:
+    run(host='localhost', port=8338)
+
+    signal.signal(signal.SIGTERM, cleanup)
+    signal.signal(signal.SIGKILL, cleanup)
+    signal.signal(signal.SIGINT, cleanup)
+    signal.pause()
+    atexit.register(cleanup)
+except KeyboardInterrupt:
+    cleanup()

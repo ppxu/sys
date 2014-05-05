@@ -1,5 +1,4 @@
 var http = require('http');
-var exec = require('child_process').exec;
 var request = require('request');
 
 var display = require('./display.js').displayDistance;
