@@ -124,13 +124,17 @@ def display():
 @route('./clean')
 def clean():
     GPIO.cleanup()
+    time.sleep(2)
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(GPIO_TRIGGER, GPIO.OUT)  # Trigger
+    GPIO.setup(GPIO_ECHO, GPIO.IN)
 
 try:
-    run(host='localhost', port=8338)
+    run(host='localhost', port=8338, reloader=True)
 
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGKILL, cleanup)
-    signal.signal(signal.SIGINT, cleanup)
+    # signal.signal(signal.SIGINT, cleanup)
     signal.pause()
     atexit.register(cleanup)
 except KeyboardInterrupt:

@@ -108,7 +108,6 @@ function clean() {
 }
 
 function postData(data, callback) {
-    console.log('begin display code...');
     request({
         uri: 'http://localhost:8338/display',
         method: 'POST',
@@ -118,10 +117,9 @@ function postData(data, callback) {
         timeout: 2000
     }, function(err, res, body) {
         if (err) {
-            console.log('display error...');
+            console.log('display error, skip...');
             callback && callback();
         } else {
-            console.log('display success...');
             callback && callback();
         }
     });
