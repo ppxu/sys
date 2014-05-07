@@ -130,7 +130,7 @@ def clean():
     GPIO.setup(GPIO_ECHO, GPIO.IN)
 
 try:
-    run(host='localhost', port=8338, reloader=True)
+    run(host='localhost', port=8338, server='paste')
 
     signal.signal(signal.SIGTERM, cleanup)
     signal.signal(signal.SIGKILL, cleanup)

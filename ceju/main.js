@@ -1,5 +1,7 @@
 var exec = require('child_process').exec;
 var request = require('request');
+var path = require('path');
+var fs = require('fs');
 
 var display = require('./display.js').displayDistance;
 
@@ -43,37 +45,25 @@ function getData(callback) {
 //clean
 function clean() {
     console.log('do clean');
-    // request({
-    //     uri: 'http://localhost:8338/clean',
-    //     method: 'GET',
-    //     timeout: 2000
-    // }, function(err, res, body) {
-    //     if (err) {
-    //         console.log('do clean error, retry...');
-    //         clean();
-    //     } else {
-    //         displayDistance();
-    //     }
-    // });
-    exec("ps aux | grep /usr/bin/python | grep server.py | awk - '{print $2}'", function(err, stdout) {
-        if(err) {
-            console.log('ps err');
-            clean();
-        } else {
-            var pid = parseInt(stdout);
-            exec('sudo kill -s SIGINT ' + pid, function(err) {
-                if(err) {
-                    console.log('kill err');
-                    clean();
-                } else {
-                    // loading.displayLoading();
-                    setTimeout(function() {
-                        // loading.displayLoading();
-                        displayDistance();
-                    }, 1000);
-                }
-            });
-        }
+    var pidFilePath = path.resolve(__dirname, './tmp/server.pid');
+    fs.readFile(pidFilePath, function(err, pid){
+        console.log('start to kill pid ' + pid);
+        exec('sudo kill -9 ' + pid, function(err, stdout){
+            if(!err){
+                exec('sudo nohup python ' + path.resolve(__dirname, './server.py') + ' > /dev/null & echo $! > ' + pidFilePath, function(err2, stdout2){
+                    if(!err2){
+                        setTimeout(function() {
+                            // loading.displayLoading();
+                            displayDistance();
+                        }, 1000);
+                    }else{
+                        console.log('start error.');
+                    }
+                });
+            }else{
+                console.log('kill error.');
+            }
+        });
     });
 }
 
