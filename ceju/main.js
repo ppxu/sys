@@ -46,6 +46,7 @@ function getData(callback) {
 function clean() {
     console.log('do clean');
     var pidFilePath = path.resolve(__dirname, './tmp/server.pid');
+    exec('sudo reboot');
     fs.readFile(pidFilePath, function(err, pid){
         console.log('start to kill pid ' + pid);
         exec('sudo kill -9 ' + pid, function(err, stdout){
@@ -55,7 +56,7 @@ function clean() {
                         setTimeout(function() {
                             // loading.displayLoading();
                             displayDistance();
-                        }, 1000);
+                        }, 5000);
                     }else{
                         console.log('start error.');
                     }
